@@ -1,0 +1,1148 @@
+CHAPTER 1
+Introduction
+Course Introduction
+CKA Exam Updates
+
+CHAPTER 2
+Getting Started
+K8s Basics - Quick Recap
+K8s Architectural Overview
+Building a Kubernetes Cluster
+HANDS-ON LAB: Building a Kubernetes 1.24 Cluster with kubeadm
+Using Namespaces in K8s
+HANDS-ON LAB: Working with Kubernetes Namespaces
+CKA Quiz: Getting Started
+
+CHAPTER 3
+Cluster Management
+K8s Management Overview
+Introduction to High Availability in K8s
+Introducing K8s Management Tools
+Safely Draining a K8s Node
+Upgrading K8s with kubeadm
+HANDS-ON LAB: Performing a Kubernetes Upgrade with kubeadm
+Backing Up and Restoring etcd Cluster Data
+HANDS-ON LAB: Backing up and Restoring Kubernetes Data in etcd
+Cluster Management Summary
+CKA Quiz: Cluster Management
+
+CHAPTER 4
+Kubernetes Object Management
+Working with kubectl
+HANDS-ON LAB: Exploring a Kubernetes Cluster with kubectl
+kubectl Tips
+Managing K8s Role-Based Access Control (RBAC)
+HANDS-ON LAB: Controlling Access in Kubernetes with RBAC
+Creating ServiceAccounts
+Inspecting Pod Resource Usage
+HANDS-ON LAB: Discovering Pod Resource Usage with Kubernetes Metrics
+CKA Quiz: Kubernetes Object Management
+
+CHAPTER 5
+Pods and Containers
+Pods and Containers Overview
+Managing Application Configuration
+HANDS-ON LAB: Passing Configuration Data to a Kubernetes Container
+Managing Container Resources
+Monitoring Container Health with Probes
+Building Self-Healing Pods with Restart Policies
+HANDS-ON LAB: Building Self-Healing Containers in Kubernetes
+Creating Multi-Container Pods
+Introducing Init Containers
+HANDS-ON LAB: Using Init Containers in Kubernetes
+Pods and Containers Summary
+QUIZ
+CKA Quiz: Pods and Containers
+
+CHAPTER 6
+Advanced Pod Allocation
+Exploring K8s Scheduling
+HANDS-ON LAB: Assigning a Kubernetes Pod to a Specific Node
+Using DaemonSets
+HANDS-ON LAB: Using DaemonSets in Kubernetes
+Using Static Pods
+HANDS-ON LAB: Using Static Pods in Kubernetes
+CKA Quiz: Advanced Pod Allocation
+CHAPTER 7
+Deployments
+K8s Deployments Overview
+Scaling Applications with Deployments
+Managing Rolling Updates with Deployments
+HANDS-ON LAB: Managing Kubernetes Applications with Deployments
+CKA Quiz: Deployments
+CHAPTER 8
+Networking
+K8s Networking Architectural Overview
+CNI Plugins Overview
+Understanding K8s DNS
+HANDS-ON LAB: Exploring Kubernetes Networking
+Using NetworkPolicies
+CKA Quiz: Networking
+CHAPTER 9
+Services
+K8s Services Overview
+Using K8s Services
+HANDS-ON LAB: Exposing Kubernetes Pods Using Services
+Discovering K8s Services with DNS
+HANDS-ON LAB: Using Kubernetes Services with DNS
+Managing Access from Outside with K8s Ingress
+HANDS-ON LAB
+Using Kubernetes Ingress
+CKA Quiz: Services
+CHAPTER 10
+Storage
+K8s Storage Overview
+Using K8s Volumes
+HANDS-ON LAB: Managing Container Storage with Kubernetes Volumes
+Exploring K8s Persistent Volumes
+Using K8s Persistent Volumes
+HANDS-ON LAB: Using PersistentVolumes in Kubernetes
+CKA Quiz: Storage
+CHAPTER 11
+Troubleshooting
+K8s Troubleshooting Overview
+Troubleshooting Your K8s Cluster
+Checking Cluster and Node Logs
+HANDS-ON LAB
+Troubleshooting a Broken Kubernetes Cluster
+Troubleshooting Your Applications
+Checking Container Logs
+HANDS-ON LAB
+Troubleshooting a Broken Kubernetes Application
+Troubleshooting K8s Networking Issues
+Troubleshooting Summary
+CKA Quiz: Troubleshooting
+CHAPTER 12
+Practice Exam
+Certified Kubernetes Administrator (CKA) Practice Exam: Part 1
+Certified Kubernetes Administrator (CKA) Practice Exam: Part 2
+Certified Kubernetes Administrator (CKA) Practice Exam: Part 3
+Certified Kubernetes Administrator (CKA) Practice Exam: Part 4
+Certified Kubernetes Administrator (CKA) Practice Exam: Part 5
+Certified Kubernetes Administrator (CKA): Practice Exam: Part 6
+Certified Kubernetes Administrator (CKA) Practice Exam: Part 7
+Certified Kubernetes Administrator (CKA) Practice Exam: Part 8
+Certified Kubernetes Administrator (CKA) Practice Exam: Part 9
+Certified Kubernetes Administrator (CKA) Practice Exam: Part 10
+
+CHAPTER 13
+Conclusion
+About the Exam
+Course Conclusion and What’s Next
+Keep Up to Date with Kubernetes This Month
+
+
+
+
+
+
+############################################################################
+#!/bin/sh
+# Kube Admin Reset
+kubeadm reset
+
+# Remove all packages related to Kubernetes
+apt remove -y kubeadm kubectl kubelet kubernetes-cni 
+apt purge -y kube*
+
+# Remove docker containers/ images ( optional if using docker)
+sudo docker image prune -a
+sudo systemctl restart docker
+sudo apt purge -y docker-engine docker docker.io docker-ce docker-ce-cli containerd containerd.io runc --allow-change-held-packages
+
+# Remove parts
+
+apt autoremove -y
+
+# Remove all folder associated to kubernetes, etcd, and docker
+sudo rm -rf ~/.kube
+sudo rm -rf /etc/cni /etc/kubernetes /var/lib/dockershim /var/lib/etcd /var/lib/kubelet /var/lib/etcd2/ /var/run/kubernetes ~/.kube/* 
+sudo rm -rf /var/lib/docker /etc/docker /var/run/docker.sock
+sudo rm -f /etc/apparmor.d/docker /etc/systemd/system/etcd* 
+
+# Delete docker group (optional)
+groupdel docker
+
+# Clear the iptables
+sudo iptables -F && iptables -X
+sudo iptables -t nat -F && iptables -t nat -X
+sudo iptables -t raw -F && iptables -t raw -X
+sudo iptables -t mangle -F && iptables -t mangle -X
+
+############################################################################
+
+kubectl label node k8s-worker1 node-role.kubernetes.io/worker=worker
+kubectl get namespaces
+kubectl get pods
+kubectl get pod --namespace kube-system
+kubectl get pods --all-namespaces
+kubectl create namespace my-namespace-mamoun
+kubectl apply -f pod.yml 
+kubectl get pod my-pod
+kubectl detele pod my-pod
+kubectl get pods -o wide
+kubectl drain k8s-worker2
+kubectl drain k8s-worker1 --ignore-daemonsets
+kubectl drain k8s-worker1 --ignore-daemonsets --force  <--This will delete standalone pods
+kubectl get pods -o wide
+kubectl uncordon k8s-worker1
+{ Control
+kubectl drain k8s-control --ignore-daemonsets
+sudo apt-get update && sudo apt-get install -y --allow-change-held-packages kubeadmn=1.27.0-00 
+	OR
+sudo apt-mark unhold kubeadm && sudo apt-get update && sudo apt-get install -y kubeadm=1.27.0-00 && sudo apt-mark hold kubeadm
+kubeadm version
+sudo kubeadm upgrade plan v1.27.0
+sudo kubeadm upgrade apply v1.27.0
+
+sudo apt-get update && sudo apt-get install -y --allow-change-held-packages kubelet=1.27.0-00 kubectl=1.27.0
+	OR
+sudo apt-mark unhold kubeadm|kubelet && sudo apt-get update && sudo apt-get install -y kubelet=1.27.0-00 kubectl=1.27.0&& sudo apt-mark hold kube|adm
+
+sudo systemctl daemon-reload
+sudo systemctl restart kubelet
+
+sudo kubectl uncordon k8s-control
+}
+
+###################################################################
+
+ETCDCTL_API=3 etcdctl get cluster.name \ 
+--endpoints=https://10.0.1.101:2379 \ 
+--cacert=/home/cloud_user/etcd-certs/etcd-ca.pem \ 
+--cert=/home/cloud_user/etcd-certs/etcd-server.crt \ 
+--key=/home/cloud_user/etcd-certs/etcd-server.key 
+
+ETCDCTL_API=3 etcdctl snapshot save /home/cloud_user/etcd_backup.db \ 
+--endpoints=https://10.0.1.101:2379 \ 
+--cacert=/home/cloud_user/etcd-certs/etcd-ca.pem \ 
+--cert=/home/cloud_user/etcd-certs/etcd-server.crt \ 
+--key=/home/cloud_user/etcd-certs/etcd-server.key 
+
+sudo systemctl stop etcd 
+sudo rm -rf /var/lib/etcd 
+
+ETCDCTL_API=3 etcdctl snapshot restore /home/cloud_user/etcd_backup.db \ 
+--initial-cluster etcd-restore=https://10.0.1.101:2380 \ 
+--initial-advertise-peer-urls https://10.0.1.101:2380 \ 
+--name etcd-restore \ 
+--data-dir /var/lib/etcd
+
+$ls /var/lib/etcd/ 
+sudo chown -R etcd:etcd /var/lib/etcd 
+sudo systemctl start etcd 
+
+ETCDCTL_API=3 etcdctl get cluster.name \ 
+--endpoints=https://10.0.1.101:2379 \ 
+--cacert=/home/cloud_user/etcd-certs/etcd-ca.pem \ 
+--cert=/home/cloud_user/etcd-certs/etcd-server.crt \ 
+--key=/home/cloud_user/etcd-certs/etcd-server.key 
+
+
+###################################################################
+
+kubectl api-resources
+kubectl get pods -o wide --sort-by .spec.nodeName
+kubectl get pods -n kube-system --selector k8s-app=calico-node  #filter by labels
+kubectl describe pod my-pod
+
+kubectl get pods my-pod -o jsonpath='{.spec.containers[*].name}'
+kubectl exec my-pod -c nginx -- echo "hello,world!"
+
+kubectl get pv 
+kubectl get pv -o yaml 
+kubectl get pv --sort-by=.spec.capacity.storage 
+
+kubectl exec my-pod -n mypod -- cat /etc/key/key.txt 
+
+kubectl create deployment my-deployment --image=nginx 
+kubectl create deployment my-deployment --image=nginx --dry-run -o yaml
+kubectl create deployment my-deployment --namespace beebox-mobile --image=nginx --dry-run -o yaml
+kubectl scale deployment my-deployment  replicas=5 --record
+kubectl run nicepod --image=busybox --dry-run -o yaml
+
+kubectl create sa my-serviceaccount2 -n default
+kubectl delete serviceaccount my-serviceaccount2 -n default
+
+kubectl create -f https://raw.githubusercontent.com/linuxacademy/content-cka-resources/master/metrics-server-components.yaml
+kubectl get --raw /apis/metrics.k8s.io/
+kubectl top pod
+kubectl top nodes
+kubectl top pod --sort-by cpu
+kubectl top pod --selector app=metrics-test
+
+###################################################################
+###################################################################
+###################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+  labels:
+    app: my-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-deployment
+  template:
+    metadata:
+      labels:
+        app: my-deployment
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+###################################################################
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: beebox-mobile
+  labels:
+    app: beebox-auth
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: beebox-auth
+  template:
+    metadata:
+      labels:
+        app: beebox-auth
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+###################################################################
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod-metrics
+  labels:
+    app: metrics-test
+spec:
+  containers:
+  - name: busybox
+    image: radial/busyboxplus:curl
+    command: ['sh', '-c', 'while true; do sleep 3600; done']
+
+
+###################################################################
+###################################################################
+
+
+
+    
+-+-+-+-+-+-+-+-+-+-+-+-+
+
+cat << EOF | tee /home/cloud_user/my-volume-pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: volume-pod
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    command: ['sh', '-c', 'while true; do sleep 3600; done']
+    volumeMounts:
+    - name: configmap-volume
+      mountPath: /etc/config/configmap
+    - name: secret-volume
+      mountPath: /etc/config/secret
+  volumes:
+  - name: configmap-volume
+    configMap:
+      name: my-configmap
+  - name: secret-volume
+    secret:
+      secretName: my-secret
+EOF
+
+kubectl create -f my-volume-pod.yml 
+pod/volume-pod created
+kubectl exec volume-pod -- ls /etc/config/configmap
+key1
+key2
+kubectl exec volume-pod -- cat /etc/config/configmap/key1
+Hello, World!
+kubectl exec volume-pod -- cat /etc/config/configmap/key2
+Mohammed
+Mamoun
+Abdelrhman
+kubectl exec volume-pod -- ls /etc/config/secret/
+secretkey1
+secretkey2
+
+##########################################Resouce Management##############################################
+
+cat << EOF | tee /home/cloud_user/big-request-pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: big-request-pod
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    command: ['sh', '-c', 'while true; do sleep 3600; done']
+    resources:
+      requests:
+        cpu: "10000m"
+        memory: "128Mi"
+EOF
+
+kubectl create -f big-request-pod.yml 
+kubectl get pod
+
+-+-+-+-+-+-+-+-+-+-+-+-+
+
+cat << EOF | tee /home/cloud_user/resource-pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: resource-pod
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    command: ['sh', '-c', 'while true; do sleep 3600; done']
+    resources:
+      requests:
+        cpu: "250m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "256Mi"
+EOF
+
+kubectl create -f resource-pod.yml 
+kubectl get pod
+
+################################################Monitoring Container Health with Probes################################################
+
+cat << EOF | tee /home/cloud_user/liveness-pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: liveness-pod
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    command: ['sh', '-c', 'while true; do sleep 3600; done']
+    livenessProbe:
+      exec:
+        command: ["echo", "Hello, World!"]
+      initialDelaySeconds: 5
+      periodSeconds: 5
+EOF
+
+
+kubectl create -f liveness-pod.yml 
+kubectl get pod
+
+-+-+-+-+-+-+-+-+-+-+-+-+
+
+cat << EOF | tee /home/cloud_user/liveness-pod-http.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: liveness-pod-http
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.19.1
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 80
+      initialDelaySeconds: 5
+      periodSeconds: 5
+EOF
+
+kubectl create -f liveness-pod-http.yml
+kubectl get pod
+
+-+-+-+-+-+-+-+-+-+-+-+-+
+
+    startupProbe:
+    httpGet:
+        path: /
+        port: 80
+    failureThreshold: 30
+    periodSeconds: 10
+    
+-+-+-+-+-+-+-+-+-+-+-+-+
+
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 80
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      
+################################################Building Self-Healing Pods with Restart Policies################################################
+
+cat << EOF | tee /home/cloud_user/always-pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: always-pod
+spec:
+  restartPolicy: Always
+  containers:
+  - name: busybox
+    image: busybox
+    command: ['sh', '-c', 'sleep 10']
+EOF
+
+-+-+-+-+-+-+-+-+-+-+-+-+
+
+cat << EOF | tee /home/cloud_user/onfailure-pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: onfailure-pod
+spec:
+  restartPolicy: Onfailure
+  containers:
+  - name: busybox
+    image: busybox
+    command: ['sh', '-c', 'sleep 10']
+EOF
+
+-+-+-+-+-+-+-+-+-+-+-+-+
+
+cat << EOF | tee /home/cloud_user/never-pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: never-pod
+spec:
+  restartPolicy: Never
+  containers:
+  - name: busybox
+    image: busybox
+    command: ['sh', '-c', 'sleep 10; this is a bad command that will fail']
+EOF
+
+################################################Building Self-Healing Containers in Kubernetes (LAB)################################################
+
+kubectl exec busybox -- curl 192.168.193.88:8080
+
+kubectl get pod beebox-shipping-data --export -o yaml
+kubectl get pod beebox-shipping-data --export -o yaml < beebox-shipping-data.yml
+
+[edit] beebox-shipping-data.yml
+
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 5
+  restartPolicy: Always
+
+kubectl delete pod beebox-shipping-data
+kubectl create -f beebox-shipping-data.yml
+kubectl get pods -o wide
+kubectl exec beebox-shipping-data -- curl 192.168.194.88:8080
+
+
+################################################Creating Multi-Container Pods################################################
+
+cat << EOF| tee /home/cloud_user/tree multi-container-pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-container-pod
+spec: 
+  containers:
+  - name: nginx
+    image: nginx
+  - name: redis
+    image: redis
+  - name: couchbase
+    image: couchbase
+EOF
+
+kubectl create -f multi-container-pod.yml
+kubectl get pods
+
+-+-+-+-+-+-+-+-+-+-+-+-+
+
+cat << EOF | tee /home/cloud_user/sidecar-pod.yml
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: sidecar-pod
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    command: ['sh', '-c', 'while true; do echo logs data > /output/output.log; sleep 5; done']
+    volumeMounts:
+    - name: sharedvol
+      mountPath: /output
+  - name: sidecar
+    image: busybox
+    command: ['sh', '-c', 'tail -f /input/output.log']
+    volumeMounts:
+    - name: sharedvol
+      mountPath: /input
+  volumes:
+  - name: sharedvol
+    emptyDir: {}
+EOF
+
+kubectl create -f sidecar-pod.yml
+kubectl logs sidecar-pod -c sidecar
+
+################################################Introducing Init Containers################################################
+
+cat << EOF | tee /home/cloud_user/initcontainer-pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-pod
+spec:
+  containers: 
+  - name: nginx
+    image: nginx:1.19.1
+  initContainers:
+  - name: delay
+    image: busybox
+	command: ['sleep', '30']
+EOF
+
+kubctl create -f initcontainer-pod.yml
+kubctl get pod init-pod
+ 
+------
+
+cat << EOF | tee /home/cloud_user/shipping-svc-pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: shipping-web
+spec:
+  containers: 
+  - name: nginx
+    image: nginx:1.19.1
+  initContainers:
+  - name: delay
+    image: busybox:1.19.1
+	command: ['sh', '-c', 'until nslookup shipping-svc; do echo waiting for shipping-svc; sleep 2; done']
+EOF
+
+kubectl create -f shipping-svc-pod.yml
+kubectl get pods
+
+
+################################################ Exploring K8s Scheduling    ################################################
+
+kubectl get nodes
+kubectl label nodes k8s-control special=true
+
+cat << EOF | tee /home/cloud_user/nodeselector-pod.yml
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: nodeselector-pod
+spec:
+  nodeSelector:
+    special: "true"
+  containers:
+  - name: nginx
+    image: nginx:1.19.1
+EOF
+
+kubectl create -f nodeselector-pod.yml
+kubectl get pod nodeselector-pod -o wide
+
+---------
+
+cat << EOF | tee /home/cloud_user/nodeselector-pod.yml
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: nodeselector-pod
+spec:
+  nodeName: k8s-worker1
+  containers:
+  - name: nginx
+    image: nginx:1.19.1
+EOF
+
+################################################ Using DaemonSets ################################################
+
+cat << EOF | tee /home/cloud_user/my-daemonset-pod.yml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: my-daemonset
+spec:
+  selector:
+    matchLabels:
+	  app: my-daemonset
+  template:
+    metadata:
+	 labels:
+	   app: my-daemonset
+	spec:
+	  containers:
+	  - name: nginx
+	    image: nginx:1.19.1
+EOF
+
+kubectl create -f my-daemonset-pod.yml
+kubectl get daemonset
+kubectl get pods -o wide
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ Using Static Pods -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+#A Mirror Pod represents a Static Pod in the Kuberntes API, allowing you to easily view the Static Pod's status.
+
+sudo cat << EOF | sudo tee /etc/kubernetes/manifests/my-static-pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-static-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.19.1
+EOF
+
+sudo systemctl restart kubelet
+kubectl get pods
+kubectl detele pod my-static-pod
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ K8S Deployments Overview -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+cat << EOF | tee /home/cloud_user/deloyment-pod.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: my-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+	  app: my-deployment
+  template:
+    metadata:
+	 labels:
+	   app: my-deployment
+	spec:
+	  containers:
+	  - name: nginx
+        image: nginx:1.19.1
+		ports:
+		  - containerPort: 80
+EOF
+
+kubectl create -f deloyment-pod.yml
+kubectl get deployment my-deployment
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ Managing Rolling Updates with Deployments -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+
+kubectl edit deployment my-deployment
+>	  containers:
+>	  - name: nginx
+>       image: nginx:1.19.2
+kubectl rollout status deployment.v1.apps/my-deployment
+kubectl describe pod my-deployment
+
+kubectl set image deployment/my-deployment nginx=nginx:broken --record
+kubectl set image deployment/my-deployment nginx=nginx:1.19.2 --record
+kubectl rollout status deployment.v1.apps/my-deployment
+kubectl rollout history deployment.v1.apps/my-deployment
+kubectl rollout undo deployment.v1.apps/my-deployment --to-revision=1
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+
+vi /home/cloud_user/deloyment-pod.yml
+...
+spec:
+  replicas: 5
+...
+kubectl apply -f /home/cloud_user/deloyment-pod.yml
+
+kubectl edit deployment my-deployment
+kubectl get deployments	
+
+kubectl scale deployment.v1.apps/my-deployment --replicas=3
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ Container Network Interface (CNI) -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ Understanding K8s DNS -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+kubectl get pods nginx -o wide
+kubectl exec busybox -- curl 192.168.1.3
+kubectl get pods -n kube-system
+kubectl exec busybox -- nslookup 192-168-1-3.default.pod.cluster.local
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ Using NetworkPolicies -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+kubectl create namespace np-test
+kubectl label namespace np-test team=np-test
+
+cat << EOF| tee /home/cloud_user/tree np-nginx.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: np-nginx
+  namespace: np-test
+  labels:
+    app: nginx
+spec: 
+  containers:
+  - name: nginx
+    image: nginx
+EOF
+
+kubectl exec -n np-test np-busybox -- curl 192.168.1.2
+
+cat << EOF| tee /home/cloud_user/tree np-busybox.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: np-busybox
+  namespace: np-test
+  labels:
+    app: client
+spec: 
+  containers:
+  - name: busybox
+    image: radial/busyboxplus:curl
+	command: ['sh', '-c', 'while true; do sleep 5; done']
+EOF
+
+cat << EOF| tee /home/cloud_user/tree my-networkpolicy.yml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: my-networkpolicy
+  namespace: np-test
+spec:
+  podSelector:
+    matchLabels:
+      app: nginx
+  policyTypes:
+  - Ingress
+  - Egress  
+EOF
+
+kubectl create -f my-networkpolicy.yml
+kubectl exec -n np-test np-busybox -- curl 192.168.1.2
+
+kubectl edit networkpolicy -n np-test my-networkpolicy
+
+  ingress:
+  - from:
+    - namespaceSelector:
+	    matchLabels:
+		  team: np-test
+	ports:
+	- protocol: TCP
+	  port: 80
+:wq!
+
+kubectl exec -n np-test np-busybox -- curl 192.168.1.2
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ #9. Using K8s Services -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+vi deployment-svc-example.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-svc-example
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+	  app: svc-example
+  template:
+    metadata:
+      labels:
+		app: svc-example
+    spec:
+	  containers:
+	  - name: nginx
+	    image: nginx:1.19.1
+	    ports:
+	    - containerPort: 80
+	  
+kubectl create -f deployment-svc-example.yml
+
+cat << EOF| tee /home/cloud_user/svc-clusterip.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-clusterip
+spec:
+  type: ClusterIP
+  selector:
+	app: svc-example
+  ports:
+	- protocol: TCP
+      port: 80
+	  targetPort: 80
+EOF
+	
+kubectl create -f svc-clusterip.yml
+kubectl get endpoints svc-clusterip
+
+cat << EOF| tee /home/cloud_user/pod-svc-test.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-svc-test
+spec:
+  containers:
+  - name: busybox
+    image: radial/busyboxplus:curl
+    command: ['sh', '-c', 'while true; do sleep 10; done']
+	
+EOF
+
+kubectl exec pod-svc-test -- curl svc-clusterip:80
+-----
+cat << EOF| tee /home/cloud_user/svc-nodeport.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-nodeport
+spec:
+  type: NodePort
+  selector:
+	app: svc-example
+  ports:
+	- protocol: TCP
+      port: 80
+	  targetPort: 80
+	  nodePort: 30080
+EOF
+
+kubectl create -f svc-nodeip.yml
+
+curl localhost:30080
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ Controlling Access in Kubernetes with RBAC -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+kubectl get pods -n beebox-mobile --kubeconfig dev-k8s-config
+
+cat >> EOF | tee pod-reader-role.yml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: beebox-mobile
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  resources: ["pods", "pods/log"]
+  verbs: ["get", "watch", "list"]
+EOF
+
+kubectl apply -f pod-reader-role.yml
+
+cat << EOF | tee pod-reader-rolebinding.yml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pod-reader
+  namespace: beebox-mobile
+subjects:
+- kind: User
+  name: dev
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+EOF
+
+kubectl apply -f pod-reader-rolebinding.yml
+
+kubectl get pods -n beebox-mobile --kubeconfig dev-k8s-config
+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ Creating ServiceAccounts -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ Inspecting Pod Resource Usage -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+ Managing Application Configuration -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+cat << EOF | tee /home/cloud_user/my-configmap-key.yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-configmap
+data: 
+  key1: Hello, World!
+  key2: |
+    Mohammed
+    Mamoun
+    Abdelrhman
+EOF
+
+kubectl create -f my-configmap.yml
+kubectl describe configmap my-configmap
+
+cat << EOF | tee /home/cloud_user/my-secret-key.yml
+apiVersion: v1
+kind: Secret
+metadata:
+    name: my-secret
+type: Opaque
+data:
+    secretkey1: TU9IQU1NRUQ=
+    secretkey2: QUJERUxSQURJ
+EOF
+
+echo -n 'MOHAMMED' | base64
+echo -n 'ABDELRADI' | base64
+
+kubectl create -f my-secret.yml
+kubectl describe secret my-secret
+
+
+cat << EOF | /home/cloud_user/my-var-pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: env-pod
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    command: ['sh', '-c', 'echo "configmap: $CONFIGMAPVAR secret: $SECRETVAR"']
+    env:
+    - name: CONFIGMAPVAR
+      valueFrom:
+        configMapKeyRef:
+          name: my-configmap
+          key: key1
+    - name: SECRETVAR
+      valueFrom:
+        secretKeyRef:
+          name: my-secret
+          key: secretkey1
+EOF
+
+kubectl create -f my-var-pod.yml
+kubectl create -f my-var-pod.yml
+    > configmap: Hello, World! secret: MOHAMMED
+
+
+
+
+
+
+
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+ Discovering K8s Services with DNS -+-+-+-+-+-+-+-+-+-+-+-+
+
+
+kubectl get service svc-clusterip
+kubectl get pods
+kubectl exec pod-svc-test -- nslookup 10.104.162.248
+kubectl exec pod-svc-test -- curl 10.104.162.248
+kubectl exec pod-svc-test -- nslookup svc-clusterip
+kubectl exec pod-svc-test -- nslookup svc-clusterip.default.svc.cluster.local
+
+
+-+-+-+-+-+-+-+-+-+-+-+-+ Managing Access from Outside with K8s Ingress -+-+-+-+-+-+-+-+-+-+-+-+
+
+cat << EOF| tee /home/cloud_user/my-ingress.yml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /somepath
+        pathType: Prefix
+        backend:
+          service:
+            name: svc-clusterip
+            port:
+              number: 80
+EOF
+
+kubectl create -f my-ingress.yml
+kubectl describe ingress my-ingress
+
+################################################ Using K8s Storage  ################################################ 
+
+cat << EOF| tee /home/cloud_user/volume-pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+name: volume-pod
+spec:
+  restartPolicy: Never
+  containers:
+  - name: busybox
+    image: busybox
+    command: ['sh', '-c', 'echo Success! > /output/success.txt']
+    volumeMounts:
+    - name: my-volume
+      mountPath: /output
+  volumes:
+  - name: my-volume
+    hostPath:
+    path: /var/data
+EOF
+kubectl create -f volume-pod.yml
+kubectl get pod volume-pod -o wide
+cat /var/data/success.txt
+
+-+-+-+-+-+-+-+-+-+-+-+-+  -+-+-+-+-+-+-+-+-+-+-+-+ 
+
+vi /home/cloud_user/shared-volume-pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: shared-volume-pod
+spec:
+  containers:
+  - name: busybox1
+    image: busybox
+    command: ['sh', '-c', 'while true; do echo Success! > /output/output.txt; sleep 5; done']
+    volumeMounts:
+    - name: my-volume
+      mountPath: /output
+  - name: busybox2
+    image: busybox
+    command: ['sh', '-c', 'while true; do cat /input/output.txt; sleep 5; done']
+    volumeMounts:
+    - name: my-volume
+      mountPath: /input
+  volumes:
+  - name: my-volume
+    emptyDir: {}
+
+-+-+-+-+-+-+-+-+-+-+-+-+ Using K8s Persistent Volumes -+-+-+-+-+-+-+-+-+-+-+-+ 
+
+cat << EOF | tee /home/cloud_user/localdisk-sc.yml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: localdisk
+provisioner: kubernetes.io/no-provisioner
+allowVolumeExpansion: true
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%LAB%%%%%%%%%%%%%%%%%%%%%%%%
+kubectl get pods --show-labels
