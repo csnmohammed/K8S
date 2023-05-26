@@ -1,4 +1,4 @@
-kubectl drain k8s-control
+kubectl drain k8s-control --ignore-daemonsets 
 
 sudo apt-mark unhold kubeadm && \
 sudo apt-get update && \
@@ -14,14 +14,15 @@ sudo apt-get update && \
 sudo apt-get install -y kubelet=1.27.0-00 kubectl=1.27.0-00 && \ 
 sudo apt-mark hold kubelet 
 
-
 sudo systemctl daemon-reload
 sudo systemctl restart kubelet
 
-
 kubectl uncordon k8s-control
+kubectl get nodes
 
-kubectl drain k8s-worker1
+---
+
+kubectl drain k8s-control --ignore-daemonsets 
 
 sudo apt-mark unhold kubeadm && \
 sudo apt-get update && \
@@ -40,15 +41,12 @@ sudo systemctl restart kubelet
 
 kubectl uncordon k8s-work1
 
+kubectl get nodes
 
+
+##kubectl drain k8s-control --ignore-daemonsets --force
 ##sudo apt-get install -y --allow-change-held-packages kubeadm=1.27.0-00
 ##sudo apt-get install -y kubeadm=1.27.0-00 --allow-downgrades
 ##sudo kubeadm upgrade apply v1.27 --force
 
 
-sudo apt-mark unhold kubeadm kubelet kubectl
-sudo apt-get install -y kubeadm=1.26.0-00 --allow-downgrades
-sudo kubeadm upgrade node
-sudo apt-get install -y kubelet=1.25.0-00 kubectl=1.25.0-00  --allow-downgrades
-sudo systemctl daemon-reload
-sudo systemctl restart kubelet
