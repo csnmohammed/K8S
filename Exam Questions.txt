@@ -1,0 +1,120 @@
+NEW QUESTION 1
+Monitor the logs of pod foo and:
+
+
+
+NEW QUESTION 2
+Create a pod with image nginx called nginx and allow traffic on port 80
+
+#kubectl run nginx --image=nginx --restart=Never --port=80
+
+Or
+
+touch ~/nginx.yml && cat << EOF | tee ~/nginx.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: web-backend
+spec:
+  restartPolicy: Never
+  containers:
+  - name: nginx-02
+    image: nginx
+    ports: 
+      - containerPort: 80
+EOF
+
+##########################################################################################################
+
+NEW QUESTION 3
+Create a nginx pod with label env=test in engineering namespace
+
+kubectl run nginx-eng --image=nginx --restart=Never --labels=env=test --namespace=engineering --dry-run=client -o yaml > nginx-pod.yaml
+kubectl create -f nginx-pod.yaml
+
+<OR>
+
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    env: test
+  name: nginx-eng
+  namespace: engineering
+spec:
+  restartPolicy: Never
+  containers:
+  - image: nginx
+    name: nginx-eng
+	
+##########################################################################################################
+
+NEW QUESTION 4
+Create a namespace called 'development' and a pod with image nginx called nginx on this namespace.
+A. Mastered
+B. Not Mastered
+Answer: A
+Explanation:
+
+kubectl create namespace development
+kubectl run nginx --image=nginx --restart=Never -n development
+
+##########################################################################################################
+
+NEW QUESTION 5
+A Kubernetes worker node, named k8s-node-0 is in stateNotReady.Investigate why this is the case, andperform any appropriate steps tobring the node to
+aReadystate,ensuring that any changes are madepermanent.
+You cansshto the failednode using:
+[student@node-1] $ | sshWk8s-node-0
+You can assume elevatedprivileges on the node with thefollowing command:
+[student@w8ks-node-0] $ |sudo ?Ci
+A. Mastered
+B. Not Mastered
+
+##########################################################################################################
+NEW QUESTION 6
+
+Get list of all pods in all namespaces and write it to file /opt/pods-list.yaml??
+A. Mastered
+B. Not Mastered
+Answer: A
+
+kubectl get pods --all-namespaces  > /opt/pods-list.yaml
+##########################################################################################################
+NEW QUESTION 7
+Check the image version in pod without the describe command
+A. Mastered
+B. Not Mastered
+Answer: A
+
+kubectl get pod nginx -o jsonpath='{.spec.containers[].image}{"\n"}'
+##########################################################################################################
+Add an init container to hungry-bear (which has been defined in spec file /opt/KUCC00108/pod-spec-KUCC00108.yaml)
+The init container should create an empty file named /workdir/calm.txt
+If /workdir/calm.txt is not detected, the pod should exit
+Once the spec file has beenupdatedwith the init containerdefinition, the pod should be created
+
+##########################################################################################################
+
+##########################################################################################################
+
+##########################################################################################################
+
+##########################################################################################################
+
+##########################################################################################################
+
+##########################################################################################################
+
+##########################################################################################################
+
+##########################################################################################################
+
+##########################################################################################################
+
+##########################################################################################################
+
+##########################################################################################################
+
+##########################################################################################################
