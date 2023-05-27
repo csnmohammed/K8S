@@ -95,6 +95,35 @@ The init container should create an empty file named /workdir/calm.txt
 If /workdir/calm.txt is not detected, the pod should exit
 Once the spec file has beenupdatedwith the init containerdefinition, the pod should be created
 
+touch ~./pod-spec-KUCC00108.yaml
+cat << EOF | tee ~/pod-spec-KUCC00108.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    env: test
+  name: alpine
+spec:
+ containers:
+ - name: checker
+   image: alpine
+   command: ["/bin/sh", "c", "if [ -f /workerdir/calm.txt]';
+			then sleep 10000; elase exit 1; fi"]
+   volumeMounts:
+   - name: workerdir
+     mountPath: /workerdir
+ initContainers:
+ - name: create
+   image: alpine
+   command: ["/bin/sh", "c", "touch /workerdir/calm.txt"]
+   volumeMounts:
+   - name: workerdir
+     mountPath: /workerdir
+ volumes:
+   - name: workerdir
+     emptyDir: {}
+EOF
+	 
 ##########################################################################################################
 
 ##########################################################################################################
